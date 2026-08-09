@@ -10,27 +10,20 @@ class HomeList extends StatelessWidget{
 
   final HomeStore homeStore = inject<HomeStore>();
   final SettingsStore settingsStore = inject<SettingsStore>();
-  final double itemHeight = 40;
 
   @override
   Widget build(BuildContext context){
     return Expanded(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          
-          return ListView.builder(
-            shrinkWrap: true,
-            itemExtent: itemHeight,
-            itemCount: homeStore.apps.length,
-            itemBuilder: (c,i){
-              HomeApps app = homeStore.apps.elementAt(i); 
-              
-              return AppCard(
-                name: app.name, 
-                category: app.category, 
-                showTextOverlay: settingsStore.textOverlay
-              );
-            }
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: homeStore.apps.length,
+        itemBuilder: (c,i){
+          HomeApps app = homeStore.apps.elementAt(i); 
+          return AppCard(
+            name: app.name, 
+            category: app.category, 
+            package: app.package,
+            showTextOverlay: settingsStore.textOverlay
           );
         }
       ),

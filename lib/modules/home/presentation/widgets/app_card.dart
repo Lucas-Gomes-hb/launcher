@@ -28,6 +28,7 @@ class AppCard extends StatelessWidget{
         if(package != null) InstalledApps.startApp(package!);
       },
       onLongPress: () {
+        print("T");
         if(package != null) InstalledApps.openSettings(package!);
       },
       child: Container(
