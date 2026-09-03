@@ -24,6 +24,24 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  late final _$defaultPieAppsAtom = Atom(
+    name: '_HomeStore.defaultPieApps',
+    context: context,
+  );
+
+  @override
+  ObservableList<HomeApps> get defaultPieApps {
+    _$defaultPieAppsAtom.reportRead();
+    return super.defaultPieApps;
+  }
+
+  @override
+  set defaultPieApps(ObservableList<HomeApps> value) {
+    _$defaultPieAppsAtom.reportWrite(value, super.defaultPieApps, () {
+      super.defaultPieApps = value;
+    });
+  }
+
   late final _$searchActiveAtom = Atom(
     name: '_HomeStore.searchActive',
     context: context,
@@ -79,6 +97,7 @@ mixin _$HomeStore on _HomeStore, Store {
   String toString() {
     return '''
 apps: ${apps},
+defaultPieApps: ${defaultPieApps},
 searchActive: ${searchActive},
 term: ${term},
 pieController: ${pieController}

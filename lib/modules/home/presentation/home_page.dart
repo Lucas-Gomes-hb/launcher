@@ -36,31 +36,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context){
-    return Observer(
-      builder:(c) => PieCanvasSca(
-        child: Scaffold(
-          body: SafeArea(
-            child: GestureDetector(
-              onDoubleTap: (){
-                context.navigate('/settings');
-              },
-              child: Column(
-                spacing: 4,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  UtilsCard(),
-                  HomeList(),
-                  SizedBox(height: 12,),
-                ],
+    return PopScope(
+      canPop: false,
+      // O PieCanvas envolve o Scaffold para o overlay do pie menu renderizar
+      // em tela cheia, em vez de ficar preso dentro de uma coluna da lista.
+      child: PieCanvasSca(
+        child: Observer(
+          builder:(c) => Scaffold(
+            body: SafeArea(
+              child: GestureDetector(
+                onDoubleTap: (){
+                  context.navigate('/settings');
+                },
+                child: Column(
+                  spacing: 4,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    UtilsCard(),
+                    HomeList(),
+                    SizedBox(height: 12,),
+                  ],
+                ),
               ),
             ),
-          ),
-          floatingActionButtonLocation: !widget.homeStore.searchActive ?  FloatingActionButtonLocation.endFloat :FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: !widget.homeStore.searchActive ? SearchButton(
-            homeController: widget.homeController,
-          ) : SearchBar(
-            homeController: widget.homeController, 
-            homeStore: widget.homeStore,
+            floatingActionButtonLocation: !widget.homeStore.searchActive ?  FloatingActionButtonLocation.endFloat :FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: !widget.homeStore.searchActive ? SearchButton(
+              homeController: widget.homeController,
+            ) : SearchBar(
+              homeController: widget.homeController, 
+              homeStore: widget.homeStore,
+            ),
           ),
         ),
       ),

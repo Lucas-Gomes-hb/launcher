@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:launcher/modules/home/data/models/home_apps.dart';
+import 'package:launcher/modules/home/domain/pie_apps_service.dart';
 import 'package:launcher/modules/home/presentation/home_store.dart';
 import 'package:launcher/modules/home/presentation/widgets/app_card.dart';
 import 'package:launcher/modules/settings/presentation/settings_controller.dart';
@@ -30,20 +31,24 @@ class ListApps extends StatelessWidget{
         Expanded(
           child: ListView(
             shrinkWrap: true,
-            children: homeStore.apps.map((v)=>GestureDetector(
-              child: Row(
-                children: [
-                  AppCard(
-                    name: v.name, 
-                    fnc:() => function(v),
-                    package: v.package, 
-                    category: v.category,
-                    showTextOverlay: false,
-                    selected: settingsController.settingsStore.apps.map((e) => e.package).contains(v.package),
+            // Settings e Chrome ficam fixos no pie menu, então não aparecem
+            // aqui para não ocuparem um dos slots de favoritos.
+            children: homeStore.apps
+                .where((v) => !PieAppsService.isDefault(v.package))
+                .map((v)=>GestureDetector(
+                  child: Row(
+                    children: [
+                      AppCard(
+                        name: v.name, 
+                        fnc:() => function(v),
+                        package: v.package, 
+                        category: v.category,
+                        showTextOverlay: false,
+                        selected: settingsController.settingsStore.apps.map((e) => e.package).contains(v.package),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )).toList(),
+                )).toList(),
           ),
         ),
       ],

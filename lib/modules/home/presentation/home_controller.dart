@@ -3,19 +3,30 @@
 import 'package:launcher/core/storage/hive_service.dart';
 import 'package:launcher/modules/home/data/models/home_apps.dart';
 import 'package:launcher/modules/home/data/repository/home_repository.dart';
+import 'package:launcher/modules/home/domain/pie_apps_service.dart';
 import 'package:launcher/modules/home/presentation/home_store.dart';
 import 'package:mobx/mobx.dart';
 
 class HomeController {
-  HomeController({required this.homeRepository, required this.homeStore, required this.hiveService});
+  HomeController({
+    required this.homeRepository,
+    required this.homeStore,
+    required this.hiveService,
+    required this.pieAppsService,
+  });
 
+  final PieAppsService pieAppsService;
   final HomeRepository homeRepository;
   final HomeStore homeStore;
   final HiveService hiveService;
 
   void apps() async {
+    Future<List<HomeApps>> defaults = pieAppsService.defaults();
+
     var apps = await homeRepository.listApps();
-    homeStore.apps = ObservableList.of(sort(list:apps));  
+    homeStore.apps = ObservableList.of(sort(list:apps));
+
+    homeStore.defaultPieApps = ObservableList.of(await defaults);
   }
 
   void search({required bool close}){

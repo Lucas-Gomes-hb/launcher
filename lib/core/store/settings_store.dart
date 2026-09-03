@@ -3,35 +3,39 @@
 import 'package:flutter/material.dart';
 import 'package:launcher/core/storage/hive_service.dart';
 import 'package:launcher/modules/home/data/models/home_apps.dart';
+import 'package:launcher/modules/home/domain/pie_apps_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'settings_store.g.dart';
 
 class SettingsStore = _SettingsStoreBase with _$SettingsStore;
 
+/// Quantidade de slots de favoritos exibida na tela de configurações.
+const int maxFavoriteApps = 6;
+
 abstract class _SettingsStoreBase with Store {
-  final HiveService hiveService;
-
   _SettingsStoreBase(this.hiveService) {
-    wallpaperOpacity = hiveService.settings.get(
-      "wallpaper_transparency",
-      defaultValue: 1.0,
+    wallpaperOpacity = hiveService.setting(
+      SettingsKeys.wallpaperTransparency,
+      1.0,
     );
 
-    textOverlay = hiveService.settings.get(
-      "textOverlay",
-      defaultValue: true,
+    textOverlay = hiveService.setting(SettingsKeys.textOverlay, true);
+
+    theme = ThemeMode.values.firstWhere(
+      (mode) => mode.name == hiveService.setting(SettingsKeys.themeMode, ""),
+      orElse: () => ThemeMode.light,
     );
 
-    List list = hiveService.settings.get(
-      "favoriteApps",
-      defaultValue: <HomeApps>[],
+    // Um padrão gravado por uma versão anterior devolve o slot ao usuário.
+    apps = ObservableList.of(
+      hiveService.favoriteApps().where(
+        (app) => !PieAppsService.isDefault(app.package),
+      ),
     );
-
-    apps = ObservableList.of(list.map((e){
-      return HomeApps(category: e.category ?? "", name: e.name, package: e.package ?? "");
-    }));
   }
+
+  final HiveService hiveService;
 
   @observable
   double wallpaperOpacity = 1.0;
@@ -48,6 +52,50 @@ abstract class _SettingsStoreBase with Store {
   @action
   void setWallpaperOpacity(double value) {
     wallpaperOpacity = value;
-    hiveService.settings.put("wallpaper_transparency", value);
+    hiveService.saveSetting(SettingsKeys.wallpaperTransparency, value);
+  }
+
+  @action
+  void setTextOverlay(bool value) {
+    textOverlay = value;
+    hiveService.saveSetting(SettingsKeys.textOverlay, value);
+  }
+
+  @action
+  void setTheme(ThemeMode value) {
+    theme = value;
+    hiveService.saveSetting(SettingsKeys.themeMode, value.name);
+  }
+
+  /// Grava o app no slot [index]. O índice é validado porque um insert fora do
+  /// tamanho atual da lista lança RangeError e o favorito era perdido.
+  @action
+  void setFavApp(int index, HomeApps app) {
+    if (index < 0 || index >= maxFavoriteApps) return;
+
+    // Settings e Chrome já ficam fixos no pie menu e não gastam slot.
+    if (PieAppsService.isDefault(app.package)) return;
+
+    final favorites = apps.toList()
+      ..removeWhere((favorite) => favorite.package == app.package);
+
+    if (index < favorites.length) {
+      favorites[index] = app;
+    } else {
+      favorites.add(app);
+    }
+
+    apps = ObservableList.of(favorites);
+    hiveService.saveFavoriteApps(favorites);
+  }
+
+  @action
+  void removeFavApp(int index) {
+    if (index < 0 || index >= apps.length) return;
+
+    final favorites = apps.toList()..removeAt(index);
+
+    apps = ObservableList.of(favorites);
+    hiveService.saveFavoriteApps(favorites);
   }
 }

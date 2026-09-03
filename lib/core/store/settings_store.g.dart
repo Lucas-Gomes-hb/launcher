@@ -99,6 +99,54 @@ mixin _$SettingsStore on _SettingsStoreBase, Store {
   }
 
   @override
+  void setTextOverlay(bool value) {
+    final _$actionInfo = _$_SettingsStoreBaseActionController.startAction(
+      name: '_SettingsStoreBase.setTextOverlay',
+    );
+    try {
+      return super.setTextOverlay(value);
+    } finally {
+      _$_SettingsStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setTheme(ThemeMode value) {
+    final _$actionInfo = _$_SettingsStoreBaseActionController.startAction(
+      name: '_SettingsStoreBase.setTheme',
+    );
+    try {
+      return super.setTheme(value);
+    } finally {
+      _$_SettingsStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setFavApp(int index, HomeApps app) {
+    final _$actionInfo = _$_SettingsStoreBaseActionController.startAction(
+      name: '_SettingsStoreBase.setFavApp',
+    );
+    try {
+      return super.setFavApp(index, app);
+    } finally {
+      _$_SettingsStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void removeFavApp(int index) {
+    final _$actionInfo = _$_SettingsStoreBaseActionController.startAction(
+      name: '_SettingsStoreBase.removeFavApp',
+    );
+    try {
+      return super.removeFavApp(index);
+    } finally {
+      _$_SettingsStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 wallpaperOpacity: ${wallpaperOpacity},

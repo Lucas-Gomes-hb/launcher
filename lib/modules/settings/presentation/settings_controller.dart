@@ -36,11 +36,18 @@ class SettingsController {
   }
 
   void setFavApp(int index, HomeApps app){
-    if(settingsStore.apps.elementAtOrNull(index) != null) settingsStore.apps.removeAt(index);
-    settingsStore.apps.insert(index, app);
+    settingsStore.setFavApp(index, app);
+  }
+
+  void removeFavApp(int index){
+    settingsStore.removeFavApp(index);
   }
 
   void setTextOverlay(bool status){
-    settingsStore.textOverlay = status;
+    settingsStore.setTextOverlay(status);
+  }
+
+  void setTheme(ThemeMode mode){
+    settingsStore.setTheme(mode);
   }
 }

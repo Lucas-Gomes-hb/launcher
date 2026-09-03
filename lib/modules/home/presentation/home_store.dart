@@ -12,6 +12,11 @@ abstract class _HomeStore with Store{
   @observable
   ObservableList<HomeApps> apps = ObservableList();
 
+  /// Apps padrão do pie menu, resolvidos quando a lista de instalados carrega.
+  /// Ficam fora de [SettingsStore.apps], então não afetam os favoritos.
+  @observable
+  ObservableList<HomeApps> defaultPieApps = ObservableList();
+
   @observable
   bool searchActive = false;
 
